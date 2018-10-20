@@ -18,7 +18,7 @@ namespace CanvasToTextSpike.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.Key = options.Value.Key;
+            ViewBag.Key = "a secret"; //options.Value.Key;
             return View();
         }
 
