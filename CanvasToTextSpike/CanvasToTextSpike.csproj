@@ -2,17 +2,32 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TypeScriptToolsVersion>3.0</TypeScriptToolsVersion>
+    <UserSecretsId>82b738f0-bdd6-4778-804a-8236e2c7619a</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="TypeScript\Drawing.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="TypeScript\site.js" />
+    <Content Include="TypeScript\site.min.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Views\" />
-    <Folder Include="wwwroot\" />
+    <Folder Include="wwwroot\NewFolder\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TypeScriptCompile Include="TypeScript\Drawing.ts" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using CanvasToTextSpike.Controllers;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -10,7 +11,9 @@ namespace CanvasToTextSpike
     {
         public Startup(IConfiguration configuration)
         {
+            
             Configuration = configuration;
+
         }
 
         public IConfiguration Configuration { get; }
@@ -26,6 +29,9 @@ namespace CanvasToTextSpike
                     .AllowAnyHeader();
             }));
 
+            services.AddOptions();
+            services.Configure<AzureApi>(Configuration.GetSection("AzureApi"));
+            services.AddScoped<TextConverter>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -42,6 +48,7 @@ namespace CanvasToTextSpike
                 app.UseHsts();
             }
 
+            
             app.UseCors("Everyone");
             app.UseHttpsRedirection();
             app.UseStaticFiles();

@@ -19,6 +19,10 @@ namespace CanvasToTextSpike
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((cx, cfg) =>
+                {
+                    cfg.AddJsonFile("appSettings.json", optional: false, reloadOnChange: true);
+                })
                 .UseStartup<Startup>();
     }
 }

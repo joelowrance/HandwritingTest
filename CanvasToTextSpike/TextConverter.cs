@@ -1,21 +1,26 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
-using Microsoft.AspNetCore.Mvc;
+using CanvasToTextSpike.Controllers;
+using Microsoft.Extensions.Options;
 
 namespace CanvasToTextSpike
 {
+    [SuppressMessage("ReSharper", "StringLiteralTypo")]
     public class TextConverter
     {
-        private HttpClient _httpClient;
-        private const string key = "b069c6d90b464b0f926253668a832dab"; //TODO: move to config
-        public TextConverter()
+        private readonly IOptions<AzureApi> _configuration;
+        private readonly HttpClient _httpClient;
+
+        public TextConverter(IOptions<AzureApi> configuration)
         {
+            _configuration = configuration;
             _httpClient = new HttpClient();
-            _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", key);
+            _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _configuration.Value.Key);
         }
 
         public async Task<string> ConvertText(byte[] image)
@@ -34,10 +39,8 @@ namespace CanvasToTextSpike
         private async Task<string> SubmitImageForProcessing(byte[] image)
         {
             var qs = HttpUtility.ParseQueryString(string.Empty);
-            bool handwriting = false;
-            qs["handwriting"] = handwriting.ToString();
-            var uri = "https://eastus.api.cognitive.microsoft.com/vision/v1.0/recognizeText?" + qs; //TODO:  set root, move to config
-
+            qs["handwriting"] = true.ToString();
+            var uri = _configuration.Value.Url + "recognizeText?" + qs; 
 
             using (var content = new ByteArrayContent(image))
             {
@@ -55,7 +58,7 @@ namespace CanvasToTextSpike
 
         private async Task<string> ReadProcessingResult(string locationUrl)
         {
-            await Task.Delay(2500);
+            await Task.Delay(1500);
             var response = await _httpClient.GetAsync(locationUrl);
             var json = await response.Content.ReadAsStringAsync();
             var root = Newtonsoft.Json.JsonConvert.DeserializeObject<MicrosoftHandwritingResult>(json);

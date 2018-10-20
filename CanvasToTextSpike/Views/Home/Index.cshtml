@@ -2,7 +2,59 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
+@section Scripts
+{
+    <script src="scripts/Drawing.js" type="text/ecmascript"></script>
+    
+    <script type="text/javascript">
+
+        function saveImage(base64) {
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:50575/api/images",
+                data: { base64Data: base64 },
+                dataType: "json",
+                success: () => {
+                    console.log("updoad completed");
+                }
+            });
+        }
+
+        $(function () {
+            var canvas = document.getElementById("can");
+            var d = new Drawing(canvas);
+
+
+            $("#saveButton").click(e => {
+            var base64 = d.save();
+            console.log("save result", base64);
+            saveImage(base64);
+          });
+        });
+
+    </script>
+    
+    
+
+
+
+  
+
+}
+
+    <ul>
+        <li>@ViewBag.Key</li>
+        <li>Add url to conifg</li>
+        <li>Copy to github</li>
+        <li>Set up deployment to azure</li>
+    </ul>
+
+<canvas id="can" style="border: 1px solid black" width="500" height="500"></canvas>
+    <div style="margin-top: 50px"><button id="saveButton">Draw to Image</button></div>
+    <img id="theimage" />
+
+
+@*<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
     <ol class="carousel-indicators">
         <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
         <li data-target="#myCarousel" data-slide-to="1"></li>
@@ -91,4 +143,4 @@
             <li><a href="https://go.microsoft.com/fwlink/?LinkID=398609">Publish to Microsoft Azure Web Apps</a></li>
         </ul>
     </div>
-</div>
+</div>*@

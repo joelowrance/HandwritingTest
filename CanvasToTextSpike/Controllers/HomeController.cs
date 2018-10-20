@@ -1,16 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using CanvasToTextSpike.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 
 namespace CanvasToTextSpike.Controllers
 {
+    public class AzureApi
+    {
+        public string Key { get; set; }
+        public string Url { get; set; }
+    }
+
     public class HomeController : Controller
     {
+        private readonly TextConverter _converter;
+
+
+        public HomeController(TextConverter converter)
+        {
+            _converter = converter;
+        }
+
         public IActionResult Index()
         {
             return View();
