@@ -11,10 +11,10 @@
 
         function saveImage(base64) {
             $("#message").text("loading");
-            
+
             $.ajax({
                 type: "POST",
-                url: "http://localhost:50575/api/images",
+                url: window.location + "/api/images",
                 data: { base64Data: base64 },
                 dataType: "json",
                 complete: function(e, f, g) {
