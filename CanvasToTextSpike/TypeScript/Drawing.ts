@@ -26,19 +26,19 @@
 
         this.canvas.addEventListener("mousemove", (e) => {
             this.findxy("move", e);
-        }, false)
+        }, false);
 
         this.canvas.addEventListener("mousedown", (e) => {
             this.findxy("down", e);
-        }, false)
+        }, false);
 
         this.canvas.addEventListener("mouseup", (e) => {
             this.findxy("up", e);
-        }, false)
+        }, false);
 
         this.canvas.addEventListener("mouseout", (e) => {
             this.findxy("out", e);
-        }, false)
+        }, false);
     }
 
     public draw() {

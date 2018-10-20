@@ -7,24 +7,18 @@ using Microsoft.Extensions.Options;
 
 namespace CanvasToTextSpike.Controllers
 {
-    public class AzureApi
-    {
-        public string Key { get; set; }
-        public string Url { get; set; }
-    }
-
     public class HomeController : Controller
     {
-        private readonly TextConverter _converter;
+        private IOptions<AzureApi> options;
 
-
-        public HomeController(TextConverter converter)
+        public HomeController(IOptions<AzureApi> options)
         {
-            _converter = converter;
+            this.options = options; 
         }
 
         public IActionResult Index()
         {
+            ViewBag.Key = options.Value.Key;
             return View();
         }
 

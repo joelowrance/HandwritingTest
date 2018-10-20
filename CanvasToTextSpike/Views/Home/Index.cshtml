@@ -7,15 +7,24 @@
     <script src="scripts/Drawing.js" type="text/ecmascript"></script>
     
     <script type="text/javascript">
+        var message = "No message to display";
 
         function saveImage(base64) {
+            $("#message").text("loading");
+            
             $.ajax({
                 type: "POST",
                 url: "http://localhost:50575/api/images",
                 data: { base64Data: base64 },
                 dataType: "json",
-                success: () => {
-                    console.log("updoad completed");
+                complete: function(e, f, g) {
+                    console.log("updoad completed", e, f, g);
+                    $("#message").text(e.responseText);
+                },
+                success: function (e, f, g) {
+                    console.log("updoad success" +
+                        "", e, f, g);
+                    $("#message").text("Done");
                 }
             });
         }
@@ -26,10 +35,10 @@
 
 
             $("#saveButton").click(e => {
-            var base64 = d.save();
-            console.log("save result", base64);
-            saveImage(base64);
-          });
+                var base64 = d.save();
+                console.log("save result", base64);
+                saveImage(base64);
+            });
         });
 
     </script>
@@ -43,10 +52,11 @@
 }
 
     <ul>
-        <li>@ViewBag.Key</li>
+        <li>tHE KEY IS: @ViewBag.Key</li>
         <li>Add url to conifg</li>
         <li>Copy to github</li>
         <li>Set up deployment to azure</li>
+        <li id="message"></li>
     </ul>
 
 <canvas id="can" style="border: 1px solid black" width="500" height="500"></canvas>

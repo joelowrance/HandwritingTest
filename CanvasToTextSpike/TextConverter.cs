@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using CanvasToTextSpike.Controllers;
 using Microsoft.Extensions.Options;
+// ReSharper disable ClassNeverInstantiated.Local
 
 namespace CanvasToTextSpike
 {
@@ -62,8 +64,14 @@ namespace CanvasToTextSpike
             var response = await _httpClient.GetAsync(locationUrl);
             var json = await response.Content.ReadAsStringAsync();
             var root = Newtonsoft.Json.JsonConvert.DeserializeObject<MicrosoftHandwritingResult>(json);
-            var message = root.recognitionResult.lines.Select(x => x.text)
-                .Aggregate((acc, cur) => acc += cur + System.Environment.NewLine);
+
+            var message = "No text";
+
+            foreach (var line in root.recognitionResult.lines ?? new List<MicrosoftHandwritingResult.Line>())
+            {
+                message += line.text + Environment.NewLine;
+            }
+            
             return message;
         }
 
