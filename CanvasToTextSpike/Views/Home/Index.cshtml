@@ -1,11 +1,167 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+<!-- this was lifted directly from https://zipso.net/a-simple-touchscreen-sketchpad-using-javascript-and-html5/ -->
+<style>
+    #sketchpadapp {
+        /* Prevent nearby text being highlighted when accidentally dragging mouse outside confines of the canvas */
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    .leftside {
+        float: left;
+        width: 220px;
+        height: 385px;
+        background-color: #def;
+        padding: 10px;
+        border-radius: 4px;
+    }
+
+    .rightside {
+        float: left;
+        margin-left: 10px;
+    }
+
+    #sketchpad {
+        float: left;
+        height: 300px;
+        width: 400px;
+        border: 2px solid #888;
+        border-radius: 4px;
+        position: relative; /* Necessary for correct mouse co-ords in Firefox */
+    }
+
+    #clearbutton {
+        font-size: 15px;
+        padding: 10px;
+        -webkit-appearance: none;
+        background: #eee;
+        border: 1px solid #888;
+    }
+</style>
+
+<ul>
+    <li>tHE KEY IS: @ViewBag.Key</li>
+    <li>Add url to conifg</li>
+    <li>Copy to github</li>
+    <li>Set up deployment to azure</li>
+    <li id="message"></li>
+</ul>
+
+
+<div id="sketchpadapp">
+    <div class="leftside">
+        Touchscreen and mouse support HTML5 canvas sketchpad.<br /><br />
+        Draw something by tapping or dragging.<br /><br />
+        Works on iOS, Android and desktop/laptop touchscreens using Chrome/Firefox/Safari.<br /><br />
+        <input type="submit" value="Clear Sketchpad" id="clearbutton" onclick="clearCanvas(canvas,ctx);">
+        <input type="submit" value="Save Sketchpad" id="saveButton">
+    </div>
+    <div class="rightside">
+        <canvas id="sketchpad" height="300" width="400"></canvas>
+    </div>
+</div>
+
+
+
+@*<canvas id="can" style="border: 1px solid black" width="500" height="500"></canvas>
+    <div style="margin-top: 50px"><button id="saveButton">Draw to Image</button></div>
+    <img id="theimage" />*@
+
+<script type="text/javascript">
+    // Variables for referencing the canvas and 2dcanvas context
+    var canvas, ctx;
+
+    // Variables to keep track of the mouse position and left-button status
+    var mouseX, mouseY, mouseDown = 0;
+
+    // Draws a dot at a specific position on the supplied canvas name
+    // Parameters are: A canvas context, the x position, the y position, the size of the dot
+    function drawDot(ctx, x, y, size) {
+        // Let's use black by setting RGB values to 0, and 255 alpha (completely opaque)
+        r = 0; g = 0; b = 0; a = 255;
+
+        // Select a fill style
+        ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + (a / 255) + ")";
+
+        // Draw a filled circle
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2, true);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    // Clear the canvas context using the canvas width and height
+    function clearCanvas(canvas, ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Keep track of the mouse button being pressed and draw a dot at current location
+    function sketchpad_mouseDown() {
+        mouseDown = 1;
+        drawDot(ctx, mouseX, mouseY, 12);
+    }
+
+    // Keep track of the mouse button being released
+    function sketchpad_mouseUp() {
+        mouseDown = 0;
+    }
+
+    // Keep track of the mouse position and draw a dot if mouse button is currently pressed
+    function sketchpad_mouseMove(e) {
+        // Update the mouse co-ordinates when moved
+        getMousePos(e);
+
+        // Draw a dot if the mouse button is currently being pressed
+        if (mouseDown == 1) {
+            drawDot(ctx, mouseX, mouseY, 12);
+        }
+    }
+
+    // Get the current mouse position relative to the top-left of the canvas
+    function getMousePos(e) {
+        if (!e)
+            var e = event;
+
+        if (e.offsetX) {
+            mouseX = e.offsetX;
+            mouseY = e.offsetY;
+        }
+        else if (e.layerX) {
+            mouseX = e.layerX;
+            mouseY = e.layerY;
+        }
+    }
+
+
+    // Set-up the canvas and add our event handlers after the page has loaded
+    function init() {
+        // Get the specific canvas element from the HTML document
+        canvas = document.getElementById('sketchpad');
+
+        // If the browser supports the canvas tag, get the 2d drawing context for this canvas
+        if (canvas.getContext)
+            ctx = canvas.getContext('2d');
+
+        // Check that we have a valid context to draw on/with before adding event handlers
+        if (ctx) {
+            canvas.addEventListener('mousedown', sketchpad_mouseDown, false);
+            canvas.addEventListener('mousemove', sketchpad_mouseMove, false);
+            window.addEventListener('mouseup', sketchpad_mouseUp, false);
+        }
+    }
+</script>
+
 
 @section Scripts
-{
-    <script src="scripts/Drawing.js" type="text/ecmascript"></script>
-    
+    {
+    <script src="scripts/Drawing2.js" type="text/ecmascript"></script>
+
     <script type="text/javascript">
         var message = "No message to display";
 
@@ -17,12 +173,12 @@
                 url: window.location + "/api/images",
                 data: { base64Data: base64 },
                 dataType: "json",
-                complete: function(e, f, g) {
-                    console.log("updoad completed", e, f, g);
+                complete: function (e, f, g) {
+                    console.log("completed", e, f, g);
                     $("#message").text(e.responseText);
                 },
                 success: function (e, f, g) {
-                    console.log("updoad success" +
+                    console.log("success" +
                         "", e, f, g);
                     $("#message").text("Done");
                 }
@@ -30,127 +186,42 @@
         }
 
         $(function () {
-            var canvas = document.getElementById("can");
-            var d = new Drawing(canvas);
+
+            init();
+
+            //var d = new SketchPad();
+            //window["sk"] = d;
+            //d.init();
+
+            //$("#clearbutton").click(() => {
+            //    console.log("cleared");
+            //    d.clearCanvas();
+            //});
+
 
 
             $("#saveButton").click(e => {
-                var base64 = d.save();
+                console.log("save");
+
+                var canvas = document.getElementById("sketchpad");
+                var data = canvas.toDataURL("image/png");
+                data = data.replace('data:image/png;base64,', '');
+                var base64 = data;
+
+                //public save() {
+                //    let data = this.canvas.toDataURL("image/png")
+                //    data = data.replace('data:image/png;base64,', '');
+                //    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                //    return data;
+                //}
+
+
+                //var base64 = d.save();
                 console.log("save result", base64);
                 saveImage(base64);
             });
         });
 
     </script>
-    
-    
-
-
-
-  
 
 }
-
-    <ul>
-        <li>tHE KEY IS: @ViewBag.Key</li>
-        <li>Add url to conifg</li>
-        <li>Copy to github</li>
-        <li>Set up deployment to azure</li>
-        <li id="message"></li>
-    </ul>
-
-<canvas id="can" style="border: 1px solid black" width="500" height="500"></canvas>
-    <div style="margin-top: 50px"><button id="saveButton">Draw to Image</button></div>
-    <img id="theimage" />
-
-
-@*<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
-    <ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-    </ol>
-    <div class="carousel-inner" role="listbox">
-        <div class="item active">
-            <img src="~/images/banner1.svg" alt="ASP.NET" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    Learn how to build ASP.NET apps that can run anywhere.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525028&clcid=0x409">
-                        Learn More
-                    </a>
-                </p>
-            </div>
-        </div>
-        <div class="item">
-            <img src="~/images/banner2.svg" alt="Visual Studio" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    There are powerful new features in Visual Studio for building modern web apps.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525030&clcid=0x409">
-                        Learn More
-                    </a>
-                </p>
-            </div>
-        </div>
-        <div class="item">
-            <img src="~/images/banner3.svg" alt="Microsoft Azure" class="img-responsive" />
-            <div class="carousel-caption" role="option">
-                <p>
-                    Learn how Microsoft's Azure cloud platform allows you to build, deploy, and scale web apps.
-                    <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkID=525027&clcid=0x409">
-                        Learn More
-                    </a>
-                </p>
-            </div>
-        </div>
-    </div>
-    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
-        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-    </a>
-    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
-        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-    </a>
-</div>
-
-<div class="row">
-    <div class="col-md-3">
-        <h2>Application uses</h2>
-        <ul>
-            <li>Sample pages using ASP.NET Core MVC</li>
-            <li>Theming using <a href="https://go.microsoft.com/fwlink/?LinkID=398939">Bootstrap</a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <h2>How to</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=398600">Add a Controller and View</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699315">Manage User Secrets using Secret Manager.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699316">Use logging to log a message.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699317">Add packages using NuGet.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699319">Target development, staging or production environment.</a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <h2>Overview</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=518008">Conceptual overview of what is ASP.NET Core</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=699320">Fundamentals of ASP.NET Core such as Startup and middleware.</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=398602">Working with Data</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkId=398603">Security</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699321">Client side development</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699322">Develop on different platforms</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=699323">Read more on the documentation site</a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <h2>Run &amp; Deploy</h2>
-        <ul>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517851">Run your app</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=517853">Run tools such as EF migrations and more</a></li>
-            <li><a href="https://go.microsoft.com/fwlink/?LinkID=398609">Publish to Microsoft Azure Web Apps</a></li>
-        </ul>
-    </div>
-</div>*@
