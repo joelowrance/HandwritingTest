@@ -1,4 +1,4 @@
-class SketchPad {
+class SketchPad2 {
     // Variables for referencing the canvas and 2dcanvas context
     public canvas: HTMLCanvasElement;
     public ctx : CanvasRenderingContext2D;
@@ -13,25 +13,31 @@ class SketchPad {
     public touchX: number = 0;
     public touchY: number = 0;
 
+    public r = 0;
+    public g = 0;
+    public b = 0;
+    public a = 255;
+
+    public pointerSize: number = 8;
+
     // Draws a dot at a specific position on the supplied canvas name
     // Parameters are: A canvas context, the x position, the y position, the size of the dot
-    public drawDot(ctx: CanvasRenderingContext2D, x: number, y: number , size: number) {
+    public drawDot(ctx: CanvasRenderingContext2D, x: number, y: number) {
         // Let's use black by setting RGB values to 0, and 255 alpha (completely opaque)
-        console.profile("begin");
-        let r=0; 
-        let g=0; 
-        let b=0; 
-        let a=255;
+        //console.profile("begin");
+        //let r=0; 
+        //let g=0; 
+        //let b=0; 
+        //let a=255;
         // Select a fill style
-        ctx.fillStyle = "rgba("+r+","+g+","+b+","+(a/255)+")";
+        this.ctx.fillStyle = "rgba(" + this.r + "," + this.g + "," + this.b + "," + (this.a/255)+")";
 
         // Draw a filled circle
         ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI*2, true);
+        ctx.arc(x, y, this.pointerSize, 0, Math.PI*2, true);
         ctx.closePath();
         ctx.fill();
-        console.log("dot");
-        console.profileEnd();
+        
     }
 
     // Clear the canvas context using the canvas width and height
@@ -42,7 +48,7 @@ class SketchPad {
     // Keep track of the mouse button being pressed and draw a dot at current location
     public sketchpadMouseDown() {
         this.mouseDown=1;
-        this.drawDot(this.ctx,this.mouseX,this.mouseY,12);
+        this.drawDot(this.ctx, this.mouseX, this.mouseY);
     }
 
     // Keep track of the mouse button being released
@@ -57,7 +63,7 @@ class SketchPad {
 
         // Draw a dot if the mouse button is currently being pressed
         if (this.mouseDown === 1) {
-            this.drawDot(this.ctx,this.mouseX,this.mouseY,12);
+            this.drawDot(this.ctx,this.mouseX,this.mouseY);
         }
     }
 
@@ -84,7 +90,7 @@ class SketchPad {
         // Update the touch co-ordinates
         this.getTouchPos(null);
 
-        this.drawDot(this.ctx,this.touchX,this.touchY,12);
+        this.drawDot(this.ctx,this.touchX,this.touchY);
 
         // Prevents an additional mousedown event being triggered
         event.preventDefault();
@@ -96,7 +102,7 @@ class SketchPad {
         this.getTouchPos(e);
 
         // During a touchmove event, unlike a mousemove event, we don't need to check if the touch is engaged, since there will always be contact with the screen by definition.
-        this.drawDot(this.ctx,this.touchX,this.touchY,12);
+        this.drawDot(this.ctx,this.touchX,this.touchY);
 
         // Prevent a scrolling action as a result of this touchmove triggering.
         event.preventDefault();

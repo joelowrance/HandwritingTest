@@ -1,5 +1,5 @@
-var SketchPad = /** @class */ (function () {
-    function SketchPad() {
+var SketchPad2 = /** @class */ (function () {
+    function SketchPad2() {
         // Variables to keep track of the mouse position and left-button status 
         this.mouseX = 0;
         this.mouseY = 0;
@@ -7,50 +7,53 @@ var SketchPad = /** @class */ (function () {
         // Variables to keep track of the touch position
         this.touchX = 0;
         this.touchY = 0;
+        this.r = 0;
+        this.g = 0;
+        this.b = 0;
+        this.a = 255;
+        this.pointerSize = 8;
     }
     // Draws a dot at a specific position on the supplied canvas name
     // Parameters are: A canvas context, the x position, the y position, the size of the dot
-    SketchPad.prototype.drawDot = function (ctx, x, y, size) {
+    SketchPad2.prototype.drawDot = function (ctx, x, y) {
         // Let's use black by setting RGB values to 0, and 255 alpha (completely opaque)
-        console.profile("begin");
-        var r = 0;
-        var g = 0;
-        var b = 0;
-        var a = 255;
+        //console.profile("begin");
+        //let r=0; 
+        //let g=0; 
+        //let b=0; 
+        //let a=255;
         // Select a fill style
-        ctx.fillStyle = "rgba(" + r + "," + g + "," + b + "," + (a / 255) + ")";
+        this.ctx.fillStyle = "rgba(" + this.r + "," + this.g + "," + this.b + "," + (this.a / 255) + ")";
         // Draw a filled circle
         ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2, true);
+        ctx.arc(x, y, this.pointerSize, 0, Math.PI * 2, true);
         ctx.closePath();
         ctx.fill();
-        console.log("dot");
-        console.profileEnd();
     };
     // Clear the canvas context using the canvas width and height
-    SketchPad.prototype.clearCanvas = function () {
+    SketchPad2.prototype.clearCanvas = function () {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     };
     // Keep track of the mouse button being pressed and draw a dot at current location
-    SketchPad.prototype.sketchpadMouseDown = function () {
+    SketchPad2.prototype.sketchpadMouseDown = function () {
         this.mouseDown = 1;
-        this.drawDot(this.ctx, this.mouseX, this.mouseY, 12);
+        this.drawDot(this.ctx, this.mouseX, this.mouseY);
     };
     // Keep track of the mouse button being released
-    SketchPad.prototype.sketchpadMouseUp = function () {
+    SketchPad2.prototype.sketchpadMouseUp = function () {
         this.mouseDown = 0;
     };
     // Keep track of the mouse position and draw a dot if mouse button is currently pressed
-    SketchPad.prototype.sketchpadMouseMove = function (e) {
+    SketchPad2.prototype.sketchpadMouseMove = function (e) {
         // Update the mouse co-ordinates when moved
         this.getMousePos(e);
         // Draw a dot if the mouse button is currently being pressed
         if (this.mouseDown === 1) {
-            this.drawDot(this.ctx, this.mouseX, this.mouseY, 12);
+            this.drawDot(this.ctx, this.mouseX, this.mouseY);
         }
     };
     // Get the current mouse position relative to the top-left of the canvas
-    SketchPad.prototype.getMousePos = function (e) {
+    SketchPad2.prototype.getMousePos = function (e) {
         if (!e)
             return;
         //e = event;
@@ -65,19 +68,19 @@ var SketchPad = /** @class */ (function () {
         console.log("end");
     };
     // Draw something when a touch start is detected
-    SketchPad.prototype.sketchpadTouchStart = function () {
+    SketchPad2.prototype.sketchpadTouchStart = function () {
         // Update the touch co-ordinates
         this.getTouchPos(null);
-        this.drawDot(this.ctx, this.touchX, this.touchY, 12);
+        this.drawDot(this.ctx, this.touchX, this.touchY);
         // Prevents an additional mousedown event being triggered
         event.preventDefault();
     };
     // Draw something and prevent the default scrolling when touch movement is detected
-    SketchPad.prototype.sketchpadTouchMove = function (e) {
+    SketchPad2.prototype.sketchpadTouchMove = function (e) {
         // Update the touch co-ordinates
         this.getTouchPos(e);
         // During a touchmove event, unlike a mousemove event, we don't need to check if the touch is engaged, since there will always be contact with the screen by definition.
-        this.drawDot(this.ctx, this.touchX, this.touchY, 12);
+        this.drawDot(this.ctx, this.touchX, this.touchY);
         // Prevent a scrolling action as a result of this touchmove triggering.
         event.preventDefault();
     };
@@ -85,7 +88,7 @@ var SketchPad = /** @class */ (function () {
     // When we get the raw values of pageX and pageY below, they take into account the scrolling on the page
     // but not the position relative to our target div. We'll adjust them using "target.offsetLeft" and
     // "target.offsetTop" to get the correct values in relation to the top left of the canvas.
-    SketchPad.prototype.getTouchPos = function (e) {
+    SketchPad2.prototype.getTouchPos = function (e) {
         if (!e)
             e = event;
         if (e.touches) {
@@ -97,7 +100,7 @@ var SketchPad = /** @class */ (function () {
         }
     };
     // Set-up the canvas and add our event handlers after the page has loaded
-    SketchPad.prototype.init = function () {
+    SketchPad2.prototype.init = function () {
         var _this = this;
         // Get the specific canvas element from the HTML document
         this.canvas = document.getElementById('sketchpad');
@@ -123,6 +126,6 @@ var SketchPad = /** @class */ (function () {
             //}, false);
         }
     };
-    return SketchPad;
+    return SketchPad2;
 }());
 //# sourceMappingURL=Drawing2.js.map
