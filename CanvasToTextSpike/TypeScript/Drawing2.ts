@@ -40,6 +40,15 @@ class SketchPad2 {
         
     }
 
+    public get dotSize(): number {
+        return this.pointerSize;
+    }
+
+    public set dotSize(val: number) {
+        console.log("chaging pointer size to " + val);
+        this.pointerSize = val;
+    }
+
     // Clear the canvas context using the canvas width and height
     public clearCanvas() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -82,7 +91,6 @@ class SketchPad2 {
             this.mouseX = e.layerX;
             this.mouseY = e.layerY;
         }
-        console.log("end");
     }
 
     // Draw something when a touch start is detected

@@ -30,6 +30,17 @@ var SketchPad2 = /** @class */ (function () {
         ctx.closePath();
         ctx.fill();
     };
+    Object.defineProperty(SketchPad2.prototype, "dotSize", {
+        get: function () {
+            return this.pointerSize;
+        },
+        set: function (val) {
+            console.log("chaging pointer size to " + val);
+            this.pointerSize = val;
+        },
+        enumerable: true,
+        configurable: true
+    });
     // Clear the canvas context using the canvas width and height
     SketchPad2.prototype.clearCanvas = function () {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -65,7 +76,6 @@ var SketchPad2 = /** @class */ (function () {
             this.mouseX = e.layerX;
             this.mouseY = e.layerY;
         }
-        console.log("end");
     };
     // Draw something when a touch start is detected
     SketchPad2.prototype.sketchpadTouchStart = function () {
