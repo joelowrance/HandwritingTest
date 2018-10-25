@@ -16,7 +16,7 @@
     .leftside {
         float: left;
         width: 220px;
-        height: 385px;
+        height: 800px;
         background-color: #def;
         padding: 10px;
         border-radius: 4px;
@@ -48,7 +48,6 @@
 <ul>
     <li><strong>TODO</strong></li>
     <li>Add ability to add a url so we can make sure the api call is working</li>
-    <li>Add ability to change font size</li>
     <li id="message"></li>
 </ul>
 
@@ -61,7 +60,14 @@
         <input type="submit" value="Clear Sketchpad" id="clearbutton" class="button">
         <input type="submit" value="Save Sketchpad" id="saveButton" class="button">
         <input type="number" min="1" max="12" step="1" id="fontSize"/>
+        
+        <div style="border: 1px solid black; padding: 3px">
+            <input type="url" maxlength="2048" id="urlInput" placeholder="Enter url" value="https://d23hgmfmlg7r34.cloudfront.net/efs_uploads/2011/02/Handwriting-Is-Beneficial-To-Children%E2%80%99s-Cognitive-Development.png" />
+            <input type="submit" value="Process Image" id="processImage" class="button">
+        </div>
+
     </div>
+
     <div class="rightside">
         <canvas id="sketchpad" height="600" width="800"></canvas>
     </div>
@@ -123,6 +129,27 @@
                 if (!isNaN(val) && val >= 3 && val <= 12) {
                     d.dotSize = val;
                }
+            });
+
+            $("#processImage").click(e => {
+                $.ajax({
+                    type: "POST",
+                    url: window.location + "/api/images/url",
+                    data: { url: $("#urlInput").val() },
+                    dataType: "json",
+                    complete: function(e, f, g) {
+                        console.log("completedUrl", e, f, g);
+                        $("#message").text(e.responseText);
+                    },
+                    success: function(e, f, g) {
+                        console.log("successUrl" +
+                            "",
+                            e,
+                            f,
+                            g);
+                        $("#message").text("Done");
+                    }
+                });
             });
 
             $("#saveButton").click(e => {

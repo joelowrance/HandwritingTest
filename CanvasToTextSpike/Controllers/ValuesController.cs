@@ -44,6 +44,26 @@ namespace CanvasToTextSpike.Controllers
             return Ok(text);
         }
 
+        [Route("url")]
+        [HttpPost]
+        [RequestSizeLimit(valueCountLimit: 21474836)]
+        // e.g. 2ish mb request limit
+        public async Task<ActionResult> PostUrl([FromForm] string url)
+        {
+            //var base64 = Request.Form["base64Data"];
+            //var bytes = System.Convert.FromBase64String(base64);
+            //var path = @"c:\temp\saved.jpg";
+            //if (System.IO.File.Exists(path))
+            //{
+            //    System.IO.File.Delete(path);
+            //}
+            //System.IO.File.WriteAllBytes(path, bytes);
+            //var magic = new TextConverter();
+            url = Request.Form["url"];
+            var text = await _textConverter.SubmitImageUrlForProcessing(url);
+            return Ok(text);
+        }
+
         //[HttpPost]
         //public async Task<ActionResult> Post(IFormFile file)
         //{

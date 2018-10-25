@@ -37,11 +37,14 @@ namespace CanvasToTextSpike
             var bytes = File.ReadAllBytes(imagePath);
             return await ConvertText(bytes);
         }
-        
+
+
+
         private async Task<string> SubmitImageForProcessing(byte[] image)
         {
             var qs = HttpUtility.ParseQueryString(string.Empty);
             qs["handwriting"] = true.ToString();
+            qs["mode"] = "handwritten";
             var uri = _configuration.Value.Url + "recognizeText?" + qs; 
 
             using (var content = new ByteArrayContent(image))
@@ -56,6 +59,36 @@ namespace CanvasToTextSpike
 
                 return response.ReasonPhrase;
             }
+        }
+
+        public async Task<string> SubmitImageUrlForProcessing(string url)
+        {
+            var qs = HttpUtility.ParseQueryString(string.Empty);
+            qs["handwriting"] = true.ToString();
+            qs["mode"] = "Handwritten";
+            var uri = _configuration.Value.Url + "recognizeText?" + qs;
+
+            var f = new
+            {
+                url = url
+            };
+
+            var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(f));
+            //using (var content = new ByteArrayContent(f))
+            //{
+                content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+                var response = await _httpClient.PostAsync(uri, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var location = response.Headers.GetValues("Operation-Location").FirstOrDefault();
+                    var text = await ReadProcessingResult(location);
+                    return text;
+
+            }
+
+            return response.ReasonPhrase;
+            //}
         }
 
         private async Task<string> ReadProcessingResult(string locationUrl)
